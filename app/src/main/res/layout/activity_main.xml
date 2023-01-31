@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="8dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/screen_title"
+        android:textSize="36sp" />
+
+    <Button
+        android:id="@+id/buttonService"
+        style="@style/ServiceButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/service" />
+
+    <Button
+        android:id="@+id/buttonForegroundService"
+        style="@style/ServiceButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/foreground_service" />
+
+    <Button
+        android:id="@+id/buttonIntentService"
+        style="@style/ServiceButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/intent_service" />
+
+    <Button
+        android:id="@+id/buttonJobDispatcher"
+        style="@style/ServiceButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/job_dispatcher" />
+
+    <Button
+        android:id="@+id/buttonJobIntentService"
+        style="@style/ServiceButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/job_intent_service" />
+
+    <Button
+        android:id="@+id/buttonAlarmManager"
+        style="@style/ServiceButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/alarm_manager" />
+
+    <Button
+        android:id="@+id/buttonWorkManager"
+        style="@style/ServiceButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/work_manager" />
+
+</LinearLayout>
