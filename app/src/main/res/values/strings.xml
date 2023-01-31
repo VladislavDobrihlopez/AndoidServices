@@ -8,4 +8,5 @@
     <string name="job_intent_service">job intent service</string>
     <string name="alarm_manager">alarm manager</string>
     <string name="work_manager">work manager</string>
+    <string name="stop_foreground_service">Stop it</string>
 </resources>
