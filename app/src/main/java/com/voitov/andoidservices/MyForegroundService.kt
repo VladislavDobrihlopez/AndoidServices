@@ -71,7 +71,7 @@ class MyForegroundService : Service() {
         private const val CHANNEL_NAME = "test channel"
         private const val NOTIFICATION_ID = 2
         private const val EXTRA_START = "start"
-        private const val TAG = "MyService"
+        private const val TAG = "SERVICE_TAG"
 
         fun newIntent(context: Context, start: Int = 0): Intent {
             return Intent(context, MyForegroundService::class.java).apply {

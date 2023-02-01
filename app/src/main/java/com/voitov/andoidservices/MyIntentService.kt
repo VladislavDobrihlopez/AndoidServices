@@ -24,7 +24,7 @@ class MyIntentService : IntentService(NAME) {
     override fun onHandleIntent(intent: Intent?) {
         log("onHandleIntent")
         var start = intent?.getIntExtra(EXTRA_START, 0) ?: 0
-        for (seconds in start until start + 100) {
+        for (seconds in start until start + 10) {
             Thread.sleep(1000)
             log((++start).toString())
         }
@@ -66,7 +66,7 @@ class MyIntentService : IntentService(NAME) {
         private const val CHANNEL_NAME = "test channel"
         private const val NOTIFICATION_ID = 1
         private const val EXTRA_START = "start"
-        private const val TAG = "MyService"
+        private const val TAG = "SERVICE_TAG"
         private const val NAME = "MyIntentService"
 
         fun newIntent(context: Context, start: Int = 0): Intent {

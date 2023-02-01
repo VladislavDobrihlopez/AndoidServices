@@ -42,7 +42,7 @@ class MyService : Service() {
 
     companion object {
         private const val EXTRA_START = "start"
-        private const val TAG = "MyService"
+        private const val TAG = "SERVICE_TAG"
 
         fun newIntent(context: Context, start: Int): Intent {
             return Intent(context, MyService::class.java).apply {
