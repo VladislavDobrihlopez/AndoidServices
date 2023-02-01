@@ -4,8 +4,11 @@ import android.app.job.JobScheduler
 import android.app.job.JobWorkItem
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import com.voitov.andoidservices.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -46,6 +49,19 @@ class MainActivity : AppCompatActivity() {
 
         binding.buttonJobIntentService.setOnClickListener {
             MyJobIntentService.enqueue(this, 0)
+        }
+
+        binding.buttonAlarmManager.setOnClickListener {
+            Toast.makeText(this, "Is gonna to be implemented", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.buttonWorkManager.setOnClickListener {
+            val workManager = WorkManager.getInstance(application)
+            workManager.enqueueUniqueWork(
+                MyWorker.WORKER_NAME,
+                ExistingWorkPolicy.APPEND,
+                MyWorker.makeRequest(page++)
+            )
         }
     }
 }
