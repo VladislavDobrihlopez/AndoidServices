@@ -23,12 +23,29 @@
         android:layout_height="wrap_content"
         android:text="@string/service" />
 
-    <Button
-        android:id="@+id/buttonForegroundService"
-        style="@style/ServiceButtonStyle"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/foreground_service" />
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/buttonForegroundService"
+            style="@style/ServiceButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="@string/foreground_service" />
+
+        <Button
+            android:id="@+id/buttonStopForegroundService"
+            style="@style/ServiceButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:text="@string/stop_foreground_service" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/buttonIntentService"
@@ -38,11 +55,11 @@
         android:text="@string/intent_service" />
 
     <Button
-        android:id="@+id/buttonJobDispatcher"
+        android:id="@+id/buttonJobScheduler"
         style="@style/ServiceButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/job_dispatcher" />
+        android:text="@string/job_scheduler" />
 
     <Button
         android:id="@+id/buttonJobIntentService"
