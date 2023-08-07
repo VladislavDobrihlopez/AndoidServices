@@ -1,6 +1,5 @@
 package com.voitov.andoidservices
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
@@ -10,21 +9,27 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MyForegroundService : Service() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private val notificationManager by lazy {
+        getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    }
+
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
-        val notification = setupNotification()
+        val notification = setupNotification().build()
         startForeground(NOTIFICATION_ID, notification)
         log("onCreate")
     }
 
     private fun createNotificationChannel() {
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel =
                 NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
@@ -32,21 +37,25 @@ class MyForegroundService : Service() {
         }
     }
 
-    private fun setupNotification(): Notification {
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+    private fun setupNotification() =
+        NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("title da dad a")
             .setContentText("text")
             .setSmallIcon(R.drawable.ic_launcher_background)
-            .build()
-    }
+            .setOnlyAlertOnce(true)
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         log("onStartCommand")
         var start = intent?.getIntExtra(EXTRA_START, 0) ?: 0
         coroutineScope.launch {
-            for (seconds in start until start + 100) {
+            for (progress in start until 101) {
                 delay(1000)
                 log((++start).toString())
+                val updatedNotify = setupNotification()
+                    .setProgress(100, progress, false)
+                    .build()
+                notificationManager.notify(NOTIFICATION_ID, updatedNotify)
             }
         }
         return START_REDELIVER_INTENT
