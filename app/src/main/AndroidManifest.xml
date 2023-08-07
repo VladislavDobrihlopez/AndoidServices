@@ -4,6 +4,7 @@
     package="com.voitov.andoidservices">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -36,6 +37,8 @@
         <service
             android:name=".MyJobIntentService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <receiver android:name=".AlarmBroadcastReceiver" />
     </application>
 
 </manifest>

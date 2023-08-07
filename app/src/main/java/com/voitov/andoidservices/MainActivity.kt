@@ -1,5 +1,7 @@
 package com.voitov.andoidservices
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.app.job.JobScheduler
 import android.app.job.JobWorkItem
 import android.content.ComponentName
@@ -7,12 +9,13 @@ import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.widget.Toast
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.voitov.andoidservices.databinding.ActivityMainBinding
+import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
     private var page = 0
@@ -20,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private val serviceConnection = object: ServiceConnection {
+    private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as? MyForegroundService.ProgressCallbackBinder
             val currentService = binder?.getService() ?: return
@@ -69,7 +72,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonAlarmManager.setOnClickListener {
-            Toast.makeText(this, "Is gonna to be implemented", Toast.LENGTH_SHORT).show()
+            Log.d("ALARM_MANAGER", "onTapped")
+
+            val finalCountdown = Calendar.getInstance()
+            finalCountdown.add(Calendar.SECOND, 21)
+            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+            val intent = AlarmBroadcastReceiver.newIntent(this)
+            val pendingIntent = PendingIntent.getBroadcast(
+                this,
+                100,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, finalCountdown.timeInMillis, pendingIntent)
         }
 
         binding.buttonWorkManager.setOnClickListener {
