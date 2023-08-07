@@ -2,8 +2,11 @@ package com.voitov.andoidservices
 
 import android.app.job.JobScheduler
 import android.app.job.JobWorkItem
+import android.content.ComponentName
+import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -15,6 +18,20 @@ class MainActivity : AppCompatActivity() {
     private var page = 0
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
+    }
+
+    private val serviceConnection = object: ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as? MyForegroundService.ProgressCallbackBinder
+            val currentService = binder?.getService() ?: return
+            currentService.callback = { updatedProgress ->
+                binding.progressBar.progress = updatedProgress
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,5 +80,15 @@ class MainActivity : AppCompatActivity() {
                 MyWorker.makeRequest(page++)
             )
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        bindService(MyForegroundService.newIntent(this, 0), serviceConnection, 0)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(serviceConnection)
     }
 }

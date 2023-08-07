@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -15,7 +16,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MyForegroundService : Service() {
+class MyForegroundService : Service(), ProgressService {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private val notificationManager by lazy {
         getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -56,6 +57,7 @@ class MyForegroundService : Service() {
                     .setProgress(100, progress, false)
                     .build()
                 notificationManager.notify(NOTIFICATION_ID, updatedNotify)
+                callback?.invoke(progress)
             }
         }
         return START_REDELIVER_INTENT
@@ -67,8 +69,14 @@ class MyForegroundService : Service() {
         log("onDestroy")
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        TODO("Not yet implemented")
+    override var callback: ((Int) -> Unit)? = null
+
+    override fun onBind(intent: Intent?): IBinder {
+        return ProgressCallbackBinder()
+    }
+
+    inner class ProgressCallbackBinder : Binder() {
+        fun getService(): ProgressService = this@MyForegroundService
     }
 
     private fun log(text: String) {
@@ -88,4 +96,8 @@ class MyForegroundService : Service() {
             }
         }
     }
+}
+
+interface ProgressService {
+    var callback: ((Int) -> Unit)?
 }
