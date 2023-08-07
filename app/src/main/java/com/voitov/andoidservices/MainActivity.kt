@@ -1,20 +1,40 @@
 package com.voitov.andoidservices
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.app.job.JobScheduler
 import android.app.job.JobWorkItem
+import android.content.ComponentName
+import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
+import android.os.IBinder
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.voitov.andoidservices.databinding.ActivityMainBinding
+import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
     private var page = 0
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as? MyForegroundService.ProgressCallbackBinder
+            val currentService = binder?.getService() ?: return
+            currentService.callback = { updatedProgress ->
+                binding.progressBar.progress = updatedProgress
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonForegroundService.setOnClickListener {
-            ContextCompat.startForegroundService(this, MyForegroundService.newIntent(this, 30))
+            ContextCompat.startForegroundService(this, MyForegroundService.newIntent(this, 0))
         }
 
         binding.buttonStopForegroundService.setOnClickListener {
@@ -52,7 +72,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonAlarmManager.setOnClickListener {
-            Toast.makeText(this, "Is gonna to be implemented", Toast.LENGTH_SHORT).show()
+            Log.d("ALARM_MANAGER", "onTapped")
+
+            val finalCountdown = Calendar.getInstance()
+            finalCountdown.add(Calendar.SECOND, 21)
+            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+            val intent = AlarmBroadcastReceiver.newIntent(this)
+            val pendingIntent = PendingIntent.getBroadcast(
+                this,
+                100,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, finalCountdown.timeInMillis, pendingIntent)
         }
 
         binding.buttonWorkManager.setOnClickListener {
@@ -63,5 +95,15 @@ class MainActivity : AppCompatActivity() {
                 MyWorker.makeRequest(page++)
             )
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        bindService(MyForegroundService.newIntent(this, 0), serviceConnection, 0)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(serviceConnection)
     }
 }
