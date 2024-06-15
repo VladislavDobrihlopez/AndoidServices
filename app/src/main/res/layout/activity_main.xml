@@ -89,4 +89,9 @@
         android:layout_height="wrap_content"
         android:text="@string/work_manager" />
 
+    <Button
+        android:id="@+id/buttonTaggedWorkManager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tagged_work_manager"/>
 </LinearLayout>

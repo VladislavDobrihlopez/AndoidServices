@@ -10,11 +10,16 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.voitov.andoidservices.databinding.ActivityMainBinding
+import com.voitov.andoidservices.worker.MyWorker
+import com.voitov.andoidservices.worker.MyWorker2
 import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
@@ -35,6 +40,10 @@ class MainActivity : AppCompatActivity() {
         override fun onServiceDisconnected(name: ComponentName?) {
 
         }
+    }
+
+    private val workManager by lazy {
+        WorkManager.getInstance(applicationContext)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,14 +97,50 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonWorkManager.setOnClickListener {
-            val workManager = WorkManager.getInstance(application)
             workManager.enqueueUniqueWork(
                 MyWorker.WORKER_NAME,
                 ExistingWorkPolicy.APPEND,
                 MyWorker.makeRequest(page++)
             )
         }
+
+        binding.buttonTaggedWorkManager.setOnClickListener {
+            var liveData = getLatestWorkInProgress()
+
+            if (liveData == null) {
+                val groceryId = "draniki"
+                val workRequest = MyWorker2.newInstance(groceryId)
+
+                workManager.enqueueUniqueWork(
+                    MyWorker2.WORKER_NAME,
+                    ExistingWorkPolicy.APPEND_OR_REPLACE,
+                    workRequest,
+                )
+
+                liveData = workManager.getWorkInfoByIdLiveData(workRequest.id)
+
+                liveData.observe(this) { workInfo ->
+                    Toast.makeText(this, "${workInfo.state}", Toast.LENGTH_SHORT).show()
+
+                    if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                        val currentDate = workInfo.outputData.getString(MyWorker2.WORKER_OUTPUT_DATE)
+                        Toast.makeText(this, "$currentDate", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
     }
+
+    private fun getLatestWorkInProgress(): LiveData<WorkInfo>? {
+        val workersInfo = workManager.getWorkInfosByTag("draniki").get()
+
+        for (workerInfo in workersInfo) {
+            if (!workerInfo.state.isFinished) return workManager.getWorkInfoByIdLiveData(workerInfo.id)
+        }
+
+        return null
+    }
+
 
     override fun onStart() {
         super.onStart()

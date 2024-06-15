@@ -9,4 +9,5 @@
     <string name="alarm_manager">alarm manager</string>
     <string name="work_manager">work manager</string>
     <string name="stop_foreground_service">Stop it</string>
+    <string name="tagged_work_manager">tagged work manager</string>
 </resources>
