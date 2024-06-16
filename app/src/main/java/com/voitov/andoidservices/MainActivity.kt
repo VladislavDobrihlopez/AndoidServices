@@ -122,6 +122,13 @@ class MainActivity : AppCompatActivity() {
                 liveData.observe(this) { workInfo ->
                     Toast.makeText(this, "${workInfo.state}", Toast.LENGTH_SHORT).show()
 
+                    if (workInfo.state == WorkInfo.State.RUNNING) {
+                        Log.d(
+                            "MainActivity",
+                            "worker2: progress ${workInfo.progress.getInt(MyWorker2.PROGRESS, 0)}"
+                        )
+                    }
+
                     if (workInfo.state == WorkInfo.State.SUCCEEDED) {
                         val currentDate = workInfo.outputData.getString(MyWorker2.WORKER_OUTPUT_DATE)
                         Toast.makeText(this, "$currentDate", Toast.LENGTH_LONG).show()
